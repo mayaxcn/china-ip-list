@@ -47,9 +47,9 @@ jobs:
          ls
          cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/netcoreapp3.1/chn_ip.txt /home/runner/work/china-ip-list/china-ip-list/chn_ip.txt
          cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/netcoreapp3.1/chnroute.txt /home/runner/work/china-ip-list/china-ip-list/chnroute.txt
-         #git rm chn_ip.txt
-         #git rm chnroute.txt
-         #git commit -m "删除旧有IP文件!"
+         git rm chn_ip.txt
+         git rm chnroute.txt
+         git commit -m "删除旧有IP文件!"
          git add chn_ip.txt
          git add chnroute.txt
          git commit -m "提交新的chn_ip.txt和chnroute.txt文件，更新于$(date "+%Y-%m-%d %H:%M:%S")"

@@ -30,8 +30,8 @@ namespace china_ip_list
                     i++;
                 }
             }
-            //Console.Write(chnroute);
-            //Console.Write(chn_ip);
+            ////Console.Write(chnroute);
+            ////Console.Write(chn_ip);
             File.WriteAllText(save_txt_path + "chnroute.txt", chnroute);
             File.WriteAllText(save_txt_path + "chn_ip.txt", chn_ip);
             Console.Write("本次共获取" + i + "条CN IPv4的记录");

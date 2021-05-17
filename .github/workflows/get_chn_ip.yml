@@ -5,7 +5,7 @@ on:
     branches: [ master ]
   workflow_dispatch: # 手动触发
   schedule: # 计划任务触发
-    - cron: '0 * * * *' # cron表达式，Actions时区是UTC时间，所以要往前推8个小时,如上表示每天14点10分
+    - cron: '0 */8 * * *' # cron表达式，Actions时区是UTC时间，所以要往前推8个小时,如上表示每天14点10分
     
 jobs:
   run-get-ip-list:

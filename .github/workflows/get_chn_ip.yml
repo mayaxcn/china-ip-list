@@ -48,8 +48,6 @@ jobs:
          pwd
          git rm chn_ip.txt
          git rm chnroute.txt
-         git rm chn_ip_v6.txt
-         git rm chnroute_v6.txt
          git commit -m "删除旧有IP文件!"
          cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/netcoreapp3.1/chn_ip.txt /home/runner/work/china-ip-list/china-ip-list/chn_ip.txt
          cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/netcoreapp3.1/chnroute.txt /home/runner/work/china-ip-list/china-ip-list/chnroute.txt

@@ -1,4 +1,4 @@
-# Mainland_China_ip_list
+# Mainland_China_IP_list_with_ipv4_v6
 
 ## 根据亚太互联网络信息中心（Asia-Pacific Network Information Centre，缩写作 APNIC），全球五大区域性互联网注册管理机构之一，成立于1993年，负责亚太地区IP地址、ASN（自治系统号）的分配列表数据，更新IP数据。
 

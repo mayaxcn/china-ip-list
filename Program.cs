@@ -40,7 +40,7 @@ namespace china_ip_list
                 {
                     string[] ip_information_v6 = per_ip.Split('|');
                     string ip_v6 = ip_information_v6[3];
-                    string ip_mask_v6 = Convert.ToString(32 - (Math.Log(Convert.ToInt32(ip_information_v6[4])) / Math.Log(2)));
+                    string ip_mask_v6 = Convert.ToString(128 - Convert.ToInt32(ip_information_v6[4]));
                     string end_ip_v6 = DecimalToIpv6(BigInteger.Parse(IpV6ToInt(ip_v6)) + Convert.ToUInt32(ip_information_v6[4]) - 1); //减掉广播地址
                     chnroute_v6 += ip_v6 + "/" + ip_mask_v6 + "\n";
                     chn_ip_v6 += ip_v6 + " " + end_ip_v6 + "\n";
@@ -124,6 +124,14 @@ namespace china_ip_list
         {
             string simplifiedIpv6 = Regex.Replace(ipv6, @"(:[0]{1,4}){2,}", "::");
             return simplifiedIpv6.Replace(":0",":");
+        }
+
+        public static int CalculateMaskBits(string ipv6Address, int subnetPrefixLength)
+        {
+            int totalSegments = ipv6Address.Split(':').Length;
+            int maskBits = totalSegments * 16 - subnetPrefixLength;
+
+            return maskBits;
         }
 
     }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -17,7 +18,6 @@ namespace china_ip_list
         static void Main(string[] args)
         {
             string apnic_ip = GetResponse("http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest");
-            
             //string apnic_ip = "apnic|IN|ipv4|103.16.104.0|1024|20130205|allocated\napnic|CN|ipv4|103.16.108.0|65536|20130205|allocated\napnic|ID|ipv4|103.16.112.0|1024|20130205|assigned\napnic|BN|ipv4|103.16.120.0|1024|20130206|assigned\napnic|CN|ipv4|103.16.124.0|1024|20130206|allocated\napnic|AU|ipv4|103.16.128.0|1024|20130206|allocated\napnic|ID|ipv4|103.16.132.0|512|20130206|assigned\n";
             string[] ip_list = apnic_ip.Split(new string[] { "\n" }, StringSplitOptions.None);
             int i = 1;
@@ -41,8 +41,8 @@ namespace china_ip_list
                 {
                     string[] ip_information_v6 = per_ip.Split('|');
                     string ip_v6 = ip_information_v6[3];
-                    string ip_mask_v6 = Convert.ToString(Convert.ToInt32(ip_information_v6[4]));
-                    string end_ip_v6 = DecimalToIpv6(BigInteger.Parse(IpV6ToInt(ip_v6)) + Convert.ToUInt32(ip_information_v6[4]) - 1); //减掉广播地址
+                    string ip_mask_v6 = Convert.ToString(ip_information_v6[4]);
+                    string end_ip_v6 = CalculateEndIPv6Address(ip_information_v6[3], Convert.ToInt32(ip_information_v6[4])); //减掉广播地址
                     chnroute_v6 += ip_v6 + "/" + ip_mask_v6 + "\n";
                     chn_ip_v6 += ip_v6 + " " + end_ip_v6 + "\n";
                     i_ip6++;
@@ -94,14 +94,14 @@ namespace china_ip_list
             return string.Format("{0}.{1}.{2}.{3}", addr1, addr2, addr3, addr4);
         }
 
-        private static string IpV6ToInt(string ipStr)
+        private static BigInteger IpV6ToInt(string ipStr)
         {
-            IPAddress ip = IPAddress.Parse(ipStr);
-            List<Byte> ipFormat = ip.GetAddressBytes().ToList();
-            ipFormat.Reverse();
-            ipFormat.Add(0);
-            BigInteger ipv6AsInt = new BigInteger(ipFormat.ToArray());
-            return ipv6AsInt.ToString();
+                IPAddress ip = IPAddress.Parse(ipStr);
+                List<Byte> ipFormat = ip.GetAddressBytes().ToList();
+                ipFormat.Reverse();
+                ipFormat.Add(0);
+                BigInteger ipv6AsInt = new BigInteger(ipFormat.ToArray());
+                return ipv6AsInt;
         }
 
         private static string DecimalToIpv6(BigInteger decimalValue)
@@ -123,17 +123,31 @@ namespace china_ip_list
 
         private static string SimplifyIpv6Address(string ipv6)
         {
-            string simplifiedIpv6 = Regex.Replace(ipv6, @"(:[0]{1,4}){2,}", "::");
-            return simplifiedIpv6.Replace(":0",":");
+            // 使用正则表达式进行匹配和替换
+            string pattern = @"(?<![:\w])(?:0+:?){2,}(?![:\w])|(?:ffff:ffff(:?0+)?)+";
+            string replacement = "::";
+            string simplifiedIpAddress = Regex.Replace(ipv6, pattern, replacement);
+
+            return simplifiedIpAddress.Replace(":0", ":");
         }
 
-        public static int CalculateMaskBits(string ipv6Address, int subnetPrefixLength)
+
+        public static string CalculateEndIPv6Address(string startIpAddress, int networkLength)
         {
-            int totalSegments = ipv6Address.Split(':').Length;
-            int maskBits = totalSegments * 16 - subnetPrefixLength;
+            IPAddress ipAddress = IPAddress.Parse(startIpAddress);
+            byte[] addressBytes = ipAddress.GetAddressBytes();
 
-            return maskBits;
+            int totalBits = IPAddress.IPv6Loopback.AddressFamily == AddressFamily.InterNetworkV6 ? 128 : 32;
+            int subnetBits = totalBits - networkLength;
+
+            BigInteger startAddress = (BigInteger)IpV6ToInt(startIpAddress);
+            BigInteger endAddress = startAddress + (BigInteger.One << subnetBits) - BigInteger.One;
+
+            byte[] endAddressBytes = endAddress.ToByteArray();
+            Array.Reverse(endAddressBytes);
+            return new IPAddress(endAddressBytes).ToString();
         }
+
 
     }
 }

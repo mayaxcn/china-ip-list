@@ -17,6 +17,7 @@ namespace china_ip_list
         static void Main(string[] args)
         {
             string apnic_ip = GetResponse("http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest");
+            
             //string apnic_ip = "apnic|IN|ipv4|103.16.104.0|1024|20130205|allocated\napnic|CN|ipv4|103.16.108.0|65536|20130205|allocated\napnic|ID|ipv4|103.16.112.0|1024|20130205|assigned\napnic|BN|ipv4|103.16.120.0|1024|20130206|assigned\napnic|CN|ipv4|103.16.124.0|1024|20130206|allocated\napnic|AU|ipv4|103.16.128.0|1024|20130206|allocated\napnic|ID|ipv4|103.16.132.0|512|20130206|assigned\n";
             string[] ip_list = apnic_ip.Split(new string[] { "\n" }, StringSplitOptions.None);
             int i = 1;

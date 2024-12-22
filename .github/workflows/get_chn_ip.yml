@@ -5,15 +5,15 @@ on:
     branches: [ master ]
   workflow_dispatch: # 手动触发
   schedule: # 计划任务触发
-    - cron: '0 */8 * * *' # cron表达式，Actions时区是UTC时间，所以要往前推8个小时,如上表示每天14点10分
-    
+    - cron: '0 */8 * * *' # cron表达式，Actions时区是UTC时间
+
 jobs:
   run-get-ip-list:
 
     runs-on: ubuntu-latest
     
     steps:
-    # 检出
+    # 检出代码
     - name: Checkout
       uses: actions/checkout@v3
       
@@ -21,17 +21,17 @@ jobs:
     - name: Set time zone
       run: sudo timedatectl set-timezone 'Asia/Shanghai'
       
-    # .Net Core 环境
+    # 设置 .NET 环境
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 8.0.11  # 根据你的项目需要调整
+        dotnet-version: 7.0.9  # 使用已发布的稳定版本
 
-    # Step 3: 设置全球化不变模式
+    # 设置全球化不变模式
     - name: Set globalization invariant mode
       run: echo "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1" >> $GITHUB_ENV
 
-    # 安装依赖
+    # 恢复依赖
     - name: Install dependencies
       run: dotnet restore
       
@@ -41,33 +41,27 @@ jobs:
        
     # 运行应用
     - name: Run
-      run: dotnet run china_ip_list.dll
-      
-    # 本地提交
+      run: dotnet run --project china_ip_list.csproj
+
+    # 提交更改到本地
     - name: Commit files
       run: |
          git config --local user.email "mayax@github.com"
          git config --local user.name "mayaxcn"
          ls
          pwd
-         git rm chn_ip.txt
-         git rm chnroute.txt
-         git rm chn_ip_v6.txt
-         git rm chnroute_v6.txt
+         git rm -f chn_ip.txt chnroute.txt chn_ip_v6.txt chnroute_v6.txt
          git commit -m "删除旧有IP文件!"
-         cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/netcoreapp3.1/chn_ip.txt /home/runner/work/china-ip-list/china-ip-list/chn_ip.txt
-         cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/netcoreapp3.1/chnroute.txt /home/runner/work/china-ip-list/china-ip-list/chnroute.txt
-         cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/netcoreapp3.1/chn_ip_v6.txt /home/runner/work/china-ip-list/china-ip-list/chn_ip_v6.txt
-         cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/netcoreapp3.1/chnroute_v6.txt /home/runner/work/china-ip-list/china-ip-list/chnroute_v6.txt
-         git add chn_ip.txt
-         git add chnroute.txt
-         git add chn_ip_v6.txt
-         git add chnroute_v6.txt
-         git commit -m "提交新的chn_ip.txt和chnroute.txt文件，更新于$(date "+%Y-%m-%d %H:%M:%S")"
+         cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/net7.0/chn_ip.txt chn_ip.txt
+         cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/net7.0/chnroute.txt chnroute.txt
+         cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/net7.0/chn_ip_v6.txt chn_ip_v6.txt
+         cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/net7.0/chnroute_v6.txt chnroute_v6.txt
+         git add chn_ip.txt chnroute.txt chn_ip_v6.txt chnroute_v6.txt
+         git commit -m "提交新的IP文件，更新于$(date "+%Y-%m-%d %H:%M:%S")"
          
-    # 更新至远程github代码仓库中
+    # 推送到远程
     - name: Push changes
-      uses:  ad-m/github-push-action@master
+      uses: ad-m/github-push-action@master
       with:
          github_token: ${{ secrets.CHNIP_GIT_KEY }}
          branch: master

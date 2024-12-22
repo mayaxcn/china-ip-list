@@ -15,17 +15,17 @@ jobs:
     steps:
     # 检出
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       
     # 设置服务器时区为东八区 
     - name: Set time zone
       run: sudo timedatectl set-timezone 'Asia/Shanghai'
       
     # .Net Core 环境
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 3.1.301
+        dotnet-version: 6.0.25  # 根据你的项目需要调整
 
     # Step 3: 设置全球化不变模式
     - name: Set globalization invariant mode

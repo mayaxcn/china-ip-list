@@ -25,7 +25,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.25  # 根据你的项目需要调整
+        dotnet-version: 8.0.11  # 根据你的项目需要调整
 
     # Step 3: 设置全球化不变模式
     - name: Set globalization invariant mode

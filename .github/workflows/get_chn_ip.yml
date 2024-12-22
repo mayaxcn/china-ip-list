@@ -27,8 +27,9 @@ jobs:
       with:
         dotnet-version: 3.1.301
 
-    - name: Install ICU library
-      run: sudo apt-get update && sudo apt-get install -y libicu-dev
+    # Step 3: 设置全球化不变模式
+    - name: Set globalization invariant mode
+      run: echo "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1" >> $GITHUB_ENV
 
     # 安装依赖
     - name: Install dependencies

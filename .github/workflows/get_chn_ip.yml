@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # PAT used for the write-back push; see CHNIP_GIT_KEY repo secret.
           token: ${{ secrets.CHNIP_GIT_KEY }}
@@ -42,10 +42,17 @@ jobs:
       - name: Update IP files
         env:
           TZ: Asia/Shanghai
+          GH_TOKEN: ${{ secrets.CHNIP_GIT_KEY }}
         run: |
           set -euo pipefail
           git config --local user.email "mayax@github.com"
           git config --local user.name  "mayaxcn"
+
+          # Inject the PAT into the remote URL so `git push` can authenticate.
+          # `x-access-token` is the username convention for GitHub PATs (works for
+          # both classic and fine-grained tokens). The token never appears in the
+          # URL of any committed file.
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/mayaxcn/china-ip-list.git"
 
           BIN="$(pwd)/bin/Release/net7.0"
           cp "${BIN}/chn_ip.txt"      chn_ip.txt

@@ -127,7 +127,20 @@ internal static class Program
         => IPAddress.Parse(ip).GetAddressBytes()
               .Aggregate<byte, uint>(0, (acc, b) => (acc << 8) | b);
 
-    private static string UintToIp(uint v) => new IPAddress(v).ToString();
+    // Format a 32-bit network-order (big-endian) IPv4 value as dotted decimal.
+    // Do NOT use `new IPAddress(uint)`: on little-endian hosts the long overload
+    // reverses the bytes, turning 1.0.1.255 into 255.1.0.1.
+    private static string UintToIp(uint v)
+    {
+        var bytes = new byte[4]
+        {
+            (byte)(v >> 24),
+            (byte)(v >> 16),
+            (byte)(v >> 8),
+            (byte)v,
+        };
+        return new IPAddress(bytes).ToString();
+    }
 
     private static BigInteger IPv6ToBigInt(string ip)
     {

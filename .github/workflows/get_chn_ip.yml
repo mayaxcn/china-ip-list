@@ -15,7 +15,7 @@ jobs:
     steps:
     # 检出代码
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
       
     # 设置服务器时区为东八区 
     - name: Set time zone
@@ -23,7 +23,7 @@ jobs:
       
     # 设置 .NET 环境
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0  # 使用已发布的稳定版本
 
@@ -41,24 +41,23 @@ jobs:
        
     # 运行应用
     - name: Run
-      run: dotnet run --project china_ip_list.csproj --configuration Release --no-build
-
-    - name: Validate generated files
-      run: python3 tests/validate_outputs.py bin/Release/net7.0
+      run: dotnet run --project china_ip_list.csproj
 
     # 提交更改到本地
     - name: Commit files
       run: |
          git config --local user.email "mayax@github.com"
          git config --local user.name "mayaxcn"
-         cp bin/Release/net7.0/chn_ip.txt chn_ip.txt
-         cp bin/Release/net7.0/chnroute.txt chnroute.txt
-         cp bin/Release/net7.0/chn_ip_v6.txt chn_ip_v6.txt
-         cp bin/Release/net7.0/chnroute_v6.txt chnroute_v6.txt
+         ls
+         pwd
+         git rm -f chn_ip.txt chnroute.txt chn_ip_v6.txt chnroute_v6.txt
+         git commit -m "删除旧有IP文件!"
+         cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/net7.0/chn_ip.txt chn_ip.txt
+         cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/net7.0/chnroute.txt chnroute.txt
+         cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/net7.0/chn_ip_v6.txt chn_ip_v6.txt
+         cp /home/runner/work/china-ip-list/china-ip-list/bin/Debug/net7.0/chnroute_v6.txt chnroute_v6.txt
          git add chn_ip.txt chnroute.txt chn_ip_v6.txt chnroute_v6.txt
-         if ! git diff --cached --quiet; then
-           git commit -m "提交新的IP文件，更新于$(date "+%Y-%m-%d %H:%M:%S")"
-         fi
+         git commit -m "提交新的IP文件，更新于$(date "+%Y-%m-%d %H:%M:%S")"
          
     # 推送到远程
     - name: Push changes

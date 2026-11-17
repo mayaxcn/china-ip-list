@@ -1,6 +1,6 @@
 # Mainland China IP List (IPv4 + IPv6)
 
-根据亚太互联网络信息中心（**APNIC**）的亚太地区 IP 地址分配列表，自动更新中国大陆 IP 数据。
+根据亚太互联网络信息中心（**APNIC**）的注册数据，自动更新中国大陆 IP 数据。
 
 每 **8 小时** 自动更新一次（UTC 00:00 / 08:00 / 16:00，对应北京时间 08:00 / 16:00 / 00:00）。
 Auto-updated every **8 hours** (UTC 00:00 / 08:00 / 16:00).
@@ -11,6 +11,22 @@ Auto-updated every **8 hours** (UTC 00:00 / 08:00 / 16:00).
 ## 数据来源
 
 APNIC Delegated Statistics: <https://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest>
+
+APNIC WHOIS IPv4 records: <https://ftp.apnic.net/apnic/whois/apnic.db.inetnum.gz>
+
+APNIC WHOIS IPv6 records: <https://ftp.apnic.net/apnic/whois/apnic.db.inet6num.gz>
+
+`delegated-apnic-latest` describes top-level allocations. It is therefore not
+enough to identify every China-registered range: a non-CN parent allocation can
+contain a more-specific `CN` `inetnum` or `inet6num`. The generator combines
+both sources, keeps current `ALLOCATED` and `ASSIGNED` records, merges
+overlapping ranges, and emits non-overlapping CIDRs. This covers cases such as
+Alibaba's `8.128.0.0/10`, whose parent is registered to Singapore while the
+more-specific WHOIS records are registered to China.
+
+This is a registry-based list. It does not claim that every address is
+currently announced from mainland China or physically located there. For
+real-time routing or geolocation decisions, use a BGP/GeoIP data source.
 
 ## 输出文件
 
